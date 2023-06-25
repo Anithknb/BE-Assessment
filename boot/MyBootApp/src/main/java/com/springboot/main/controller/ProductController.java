@@ -71,18 +71,21 @@ public class ProductController {
 	 */
 	@GetMapping("/one/{id}") //this id is called as path variable
 	public ResponseEntity<?> getProduct(@PathVariable("id") int id) {
-		Product product  = productService.getproduct(id);
-		if(product == null) {
+		Product product;
+		try {
+			product = productService.getById(id);
+		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Invalid ID given");
 		}
+	
 		return ResponseEntity.status(HttpStatus.OK).body(product); 
 	}
 	//Not a professional way 
 	@GetMapping("/one/alternate/{id}")
 	public Object getProductAlternate(@PathVariable("id") int id) {
 		try {
-			Product product  = productService.getproductAlternate(id);
+			Product product  = productService.getById(id);
 			return product; 
 		} catch (ResourceNotFoundException e) {
 			 return e.getMessage();
@@ -105,7 +108,14 @@ public class ProductController {
 					.body("Price must have a value other than 0");
 		
 		//Step 1: Validate the id given 
-		Product oldProduct  = productService.getproduct(id);
+		Product oldProduct;
+		try {
+			oldProduct = productService.getById(id);
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body("Invalid ID given");
+			
+		}
 		if(oldProduct == null) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Invalid ID given");
@@ -123,13 +133,17 @@ public class ProductController {
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
 		//Step 1: validate id
-		Product product  = productService.getproduct(id);
-		if(product == null) {
+		Product product;
+		try {
+			product = productService.getById(id);
+		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body("Invalid ID given");
+			
 		}
+	
 		
-		productService.deleteProduct(product);
+		productService.delete(id);
 		
 		return ResponseEntity.status(HttpStatus.OK)
 				.body("Product deleted..");

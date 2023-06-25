@@ -15,57 +15,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.main.exception.ResourceNotFoundException;
-import com.springboot.main.model.Supplier;
-import com.springboot.main.service.SupplierService;
+import com.springboot.main.model.Customer;
+import com.springboot.main.service.CustomerService;
 
 @RestController
-@RequestMapping("/supplier")
-public class SupplierController {
-	
+@RequestMapping("/customer")
+public class CustomerController {
+
 	@Autowired
-	private SupplierService supplierService;
+	private CustomerService customerService;
 
 	@PostMapping("/add")
-	public Supplier postSupplier(@RequestBody Supplier supplier) {
-		return supplierService.insert(supplier);
+	public Customer postCustomer(@RequestBody Customer customer) {
+		return customerService.insert(customer);
 	}
 	
 	@GetMapping("/all")
-	public List<Supplier> getAll() {
-		return supplierService.getAll();
+	public List<Customer> getAll() {
+		return customerService.getAll();
 	}
 	
 	@GetMapping("/one/{id}")
 	public ResponseEntity<?> getOne(@PathVariable int id) {
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(supplierService.getById(id));
+			return ResponseEntity.status(HttpStatus.OK).body(customerService.getById(id));
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable int id, @RequestBody Supplier supplier) {
+	public ResponseEntity<?> update(@PathVariable int id, @RequestBody Customer customer) {
 		try {
-			supplierService.getById(id);
+			customerService.getById(id);
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 		
-		supplier.setId(id);
-		return ResponseEntity.status(HttpStatus.OK).body(supplierService.insert(supplier));
+		customer.setId(id);
+		return ResponseEntity.status(HttpStatus.OK).body(customerService.insert(customer));
 	}
 	
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable int id) {
 		try {
-			supplierService.getById(id);
+			customerService.getById(id);
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(e.getMessage());
 		}
 		
-		supplierService.delete(id);
+		customerService.delete(id);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	

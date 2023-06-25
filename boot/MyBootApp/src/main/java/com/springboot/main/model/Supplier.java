@@ -7,12 +7,15 @@ import javax.persistence.Id;
 
 @Entity
 public class Supplier {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 
 	private String name;
+	
 	private String address;
+	
 	private String city;
 
 	public int getId() {

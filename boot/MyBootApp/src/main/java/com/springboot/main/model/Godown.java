@@ -8,14 +8,15 @@ import javax.persistence.OneToOne;
 
 @Entity
 public class Godown {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-	
-	private String location; 
-	
-	private double capacityInQuintals; 
-	
+
+	private String location;
+
+	private double capacityInQuintals;
+
 	@OneToOne
 	private Manager manager;
 
@@ -51,8 +52,4 @@ public class Godown {
 		this.manager = manager;
 	}
 
-	
-		
-	} 
-	
-	
+}

@@ -7,15 +7,20 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Manager {
-	
+public class Employee {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-
+	
 	private String name;
-
+	
 	private String address;
+	
+	private String jobTitle;
+	
+	@OneToOne
+	private Manager manager;
 	
 	@OneToOne
 	private User user;
@@ -44,6 +49,22 @@ public class Manager {
 		this.address = address;
 	}
 
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
+	}
+
+	public Manager getManager() {
+		return manager;
+	}
+
+	public void setManager(Manager manager) {
+		this.manager = manager;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -51,5 +72,5 @@ public class Manager {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
+	
 }

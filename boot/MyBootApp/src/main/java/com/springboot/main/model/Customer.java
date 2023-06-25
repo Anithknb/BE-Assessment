@@ -4,10 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 @Entity
-public class Manager {
+public class Customer {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,9 +15,8 @@ public class Manager {
 	private String name;
 
 	private String address;
-	
-	@OneToOne
-	private User user;
+
+	private String city;
 
 	public int getId() {
 		return id;
@@ -44,12 +42,12 @@ public class Manager {
 		this.address = address;
 	}
 
-	public User getUser() {
-		return user;
+	public String getCity() {
+		return city;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setCity(String city) {
+		this.city = city;
 	}
 
 }

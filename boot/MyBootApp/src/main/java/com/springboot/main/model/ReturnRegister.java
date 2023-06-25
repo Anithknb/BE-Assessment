@@ -6,34 +6,36 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity
-public class OutwardRegister {
-	
+public class ReturnRegister {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
-
-	@ManyToOne
+	
+	private String reason;
+	
 	private Product product;
-
-	@ManyToOne
-	private Godown godown;
-
-	private int quantity;
-
-	private String invoiceNumber;
-
-	private String purpose;
-
-	private String receiptNo;
-
-	private double billValue;
-
-	private String deliveredTo;
-
+	
 	private LocalDate dateOfDelivery;
+	
+	private LocalDate dateOfReturn;
+	
+	private Godown godown;
+	
+	private int quantity;
+	
+	private String invoiceNumber;
+	
+	private Customer returnedBy;
+	
+	private int receiptNo;
+	
+	private double billValue;
+	@OneToOne
+	private Manager checkedBy;
 
 	public int getId() {
 		return id;
@@ -43,12 +45,36 @@ public class OutwardRegister {
 		this.id = id;
 	}
 
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
 	public Product getProduct() {
 		return product;
 	}
 
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+
+	public LocalDate getDateOfDelivery() {
+		return dateOfDelivery;
+	}
+
+	public void setDateOfDelivery(LocalDate dateOfDelivery) {
+		this.dateOfDelivery = dateOfDelivery;
+	}
+
+	public LocalDate getDateOfReturn() {
+		return dateOfReturn;
+	}
+
+	public void setDateOfReturn(LocalDate dateOfReturn) {
+		this.dateOfReturn = dateOfReturn;
 	}
 
 	public Godown getGodown() {
@@ -75,19 +101,19 @@ public class OutwardRegister {
 		this.invoiceNumber = invoiceNumber;
 	}
 
-	public String getPurpose() {
-		return purpose;
+	public Customer getReturnedBy() {
+		return returnedBy;
 	}
 
-	public void setPurpose(String purpose) {
-		this.purpose = purpose;
+	public void setReturnedBy(Customer returnedBy) {
+		this.returnedBy = returnedBy;
 	}
 
-	public String getReceiptNo() {
+	public int getReceiptNo() {
 		return receiptNo;
 	}
 
-	public void setReceiptNo(String receiptNo) {
+	public void setReceiptNo(int receiptNo) {
 		this.receiptNo = receiptNo;
 	}
 
@@ -99,20 +125,12 @@ public class OutwardRegister {
 		this.billValue = billValue;
 	}
 
-	public String getDeliveredTo() {
-		return deliveredTo;
+	public Manager getCheckedBy() {
+		return checkedBy;
 	}
 
-	public void setDeliveredTo(String deliveredTo) {
-		this.deliveredTo = deliveredTo;
+	public void setCheckedBy(Manager manager) {
+		this.checkedBy = manager;
 	}
-
-	public LocalDate getDateOfDelivery() {
-		return dateOfDelivery;
-	}
-
-	public void setDateOfDelivery(LocalDate dateOfDelivery) {
-		this.dateOfDelivery = dateOfDelivery;
-	}
-
+	
 }
