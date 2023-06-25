@@ -1,2 +1,2 @@
-# BE-Assessment
-Backend assessment (creating API and report)
+# BE-Assignment
+Backend Assignment (creating API and report)
