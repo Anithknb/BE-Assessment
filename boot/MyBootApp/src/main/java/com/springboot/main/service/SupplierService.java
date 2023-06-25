@@ -1,10 +1,12 @@
 package com.springboot.main.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.springboot.main.exception.ResourceNotFoundException;
 import com.springboot.main.model.Supplier;
 import com.springboot.main.repository.SupplierRepository;
 
@@ -12,23 +14,28 @@ import com.springboot.main.repository.SupplierRepository;
 public class SupplierService {
 
 	@Autowired
-	private SupplierRepository supplierRepository; 
-	
+	private SupplierRepository supplierRepository;
+
 	public Supplier insert(Supplier supplier) {
 		return supplierRepository.save(supplier);
 	}
-
-	public Supplier getById(int supplierId) {
-		Optional<Supplier> optional = supplierRepository.findById(supplierId);
-		return optional.orElse(null);
+	
+	public List<Supplier> getAll() {
+		return supplierRepository.findAll();
 	}
 
-	public Supplier update(Supplier supplier) {
-		return supplierRepository.save(supplier);
+	public Supplier getById(int id) throws ResourceNotFoundException {
+		Optional<Supplier> optional = supplierRepository.findById(id);
+		
+		if (optional.isEmpty()) {
+			throw new ResourceNotFoundException("Invalid ID given");
+		}
+		
+		return optional.get();
+	}
+	
+	public void delete(int id) {
+		supplierRepository.deleteById(id);
 	}
 
-	public void delete(Supplier supplier) {
-		supplierRepository.delete(supplier);
-	}
 }
-

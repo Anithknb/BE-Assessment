@@ -15,47 +15,32 @@ public class ProductService {
 
 	@Autowired
 	private ProductRepository productRepository;
-	
+
 	public Product insert(Product product) {
-		return productRepository.save(product);	 
+		return productRepository.save(product);
 	}
 
-	public List<Product> getAllProducts() {
+	public List<Product> getAll() {
 		return productRepository.findAll();
 	}
 
-	public Product getproduct(int id) {
-		//Scene 1: id is valid we get the product 
-		//scene 2: id is not valid: we get null 
-		Optional<Product> optional= 
-				productRepository.
-				findById(id);
-		if(!optional.isPresent()) {
-			return null; 
-		}
-		return optional.get();
-	}
-
-	public Product getproductAlternate(int id) throws ResourceNotFoundException{
-		Optional<Product> optional= productRepository.findById(id);
-		if(!optional.isPresent()) {
-			throw new ResourceNotFoundException("Invalid ID Given.."); 
-		}
-		return optional.get();
-	}
-
-	public void deleteProduct(Product product) {
-		productRepository.delete(product);
+	public Product getById(int id) throws ResourceNotFoundException {
+		Optional<Product> optional = productRepository.findById(id);
 		
+		if (optional.isEmpty()) {
+			throw new ResourceNotFoundException("Invalid ID given");
+		}
+		
+		return optional.get();
+	}
+	
+	public void delete(int id) {
+		productRepository.deleteById(id);
 	}
 
-	public Product getById(int productId) {
-		 
-		Optional<Product> optional= productRepository.findById(productId);
-		if(!optional.isPresent()) {
-			return null; 
-		}
-		return optional.get();
+	public List<Product> getAllProducts() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

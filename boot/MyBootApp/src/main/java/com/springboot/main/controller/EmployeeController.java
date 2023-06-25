@@ -16,70 +16,90 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.main.exception.ResourceNotFoundException;
+import com.springboot.main.model.Employee;
 import com.springboot.main.model.Manager;
 import com.springboot.main.model.User;
+import com.springboot.main.service.EmployeeService;
 import com.springboot.main.service.ManagerService;
 import com.springboot.main.service.UserService;
 
 @RestController
-@RequestMapping("/manager")
-public class ManagerController {
-
+@RequestMapping("/employee")
+public class EmployeeController {
+	
+	@Autowired
+	private EmployeeService employeeService;
+	
 	@Autowired
 	private ManagerService managerService;
 	
 	@Autowired
-    private UserService userService;
+	private UserService userService;
 	
 	@Autowired
     private PasswordEncoder passwordEncoder;
-	
-	@PostMapping("/add")
-	public Manager postManager(@RequestBody Manager manager) {
-		User user = manager.getUser();
-		user.setRole("MANAGER");
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+	@PostMapping("/add/{managerId}")
+	public ResponseEntity<?> postEmployee(@PathVariable("managerId") int managerId, @RequestBody Employee employee) throws ResourceNotFoundException {
+		Manager manager;
+		manager = managerService.getById(managerId);
+		employee.setManager(manager);
+		
+		User user = employee.getUser();
+		user.setRole("EMPLOYEE");
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userService.insert(user);
-        manager.setUser(user);
-		return managerService.insert(manager);
+        employee.setUser(user);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(employeeService.insert(employee));
 	}
 	
 	@GetMapping("/all")
-	public List<Manager> getAll() {
-		return managerService.getAll();
+	public List<Employee> getAll() {
+		return employeeService.getAll();
 	}
 	
 	@GetMapping("/one/{id}")
 	public ResponseEntity<?> getOne(@PathVariable int id) {
 		try {
-			return ResponseEntity.status(HttpStatus.OK).body(managerService.getById(id));
+			return ResponseEntity.status(HttpStatus.OK).body(employeeService.getById(id));
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
 	
-	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@PathVariable int id, @RequestBody Manager manager) {
+	@PutMapping("/update/{id}/{managerId}")
+	public ResponseEntity<?> update(@PathVariable int id, @PathVariable("managerId") int managerId, @RequestBody Employee employee) throws ResourceNotFoundException {
 		try {
-			managerService.getById(id);
+			employeeService.getById(id);
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 		
-		manager.setId(id);
-		return ResponseEntity.status(HttpStatus.OK).body(managerService.insert(manager));
+		employee.setId(id);
+		Manager manager;
+		manager = managerService.getById(managerId);
+		employee.setManager(manager);
+		
+		User user = employee.getUser();
+		user.setRole("EMPLOYEE");
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user = userService.insert(user);
+        employee.setUser(user);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(employeeService.insert(employee));
 	}
 	
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> delete(@PathVariable int id) {
 		try {
-			managerService.getById(id);
+			employeeService.getById(id);
 		} catch (ResourceNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(e.getMessage());
 		}
 		
-		managerService.delete(id);
+		employeeService.delete(id);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	

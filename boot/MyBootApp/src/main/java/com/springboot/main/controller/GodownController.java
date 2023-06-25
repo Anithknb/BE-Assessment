@@ -1,5 +1,7 @@
 package com.springboot.main.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springboot.main.exception.ResourceNotFoundException;
 import com.springboot.main.model.Godown;
 import com.springboot.main.model.Manager;
 import com.springboot.main.service.GodownService;
@@ -23,72 +26,60 @@ public class GodownController {
 
 	@Autowired
 	private GodownService godownService;
-	
+
 	@Autowired
-	private ManagerService managerService; 
-	@PostMapping("/add/{managerID}")
-	public ResponseEntity<?> insertGodown(@PathVariable("managerID") int managerID, 
-			@RequestBody Godown godown) {
-		//Step 0: validation, if needed for Request body, is done is ProductController in PUT api. 
-		
-		/* Step 1: Validate and fetch Manager from managerId */
-		Manager manager = managerService.getById(managerID);
-		if(manager == null)
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-					.body("Invalid Manager ID"); 
-		
-		/* Step 2: attach manager to godown object */
-			godown.setManager(manager);
-			
-		/* Step 3: save godown object */
+	private ManagerService managerService;
+
+	@PostMapping("/add/{managerId}")
+	public ResponseEntity<?> insertGodown(@PathVariable("managerId") int managerId, @RequestBody Godown godown) {
+		Manager manager;
+		try {
+			manager = managerService.getById(managerId);
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Manager ID");
+		}
+
+		godown.setManager(manager);
+
 		godown = godownService.insert(godown);
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(godown);
-		
-		
+
+		return ResponseEntity.status(HttpStatus.OK).body(godown);
 	}
-	@GetMapping("get/{managerID}")
-	public ResponseEntity<?> getGodown(@PathVariable("id") int id) {
-		Godown godown = godownService.getById(id);
-		if (godown == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Godown not found"); 
-		}
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(godown);
+
+
+	@GetMapping("/one/{id}")
+	public ResponseEntity<?> getOne(@PathVariable int id) throws ResourceNotFoundException {
+		return ResponseEntity.status(HttpStatus.OK).body(godownService.getById(id));
 	}
-	@PutMapping("/update/{managerID}")
-	public ResponseEntity<?> updateGodown(@PathVariable("id") int id, 
-			@RequestBody Godown updatedGodown) {
-		Godown godown = godownService.getById(id);
-		if (godown == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Godown not found"); 
+
+	@PutMapping("/update/{id}/{managerId}")
+	public ResponseEntity<?> update(@PathVariable int id, @PathVariable("managerId") int managerId,
+			@RequestBody Godown godown) throws ResourceNotFoundException {
+		godownService.getById(id);
+
+		godown.setId(id);
+		Manager manager;
+		try {
+			manager = managerService.getById(managerId);
+		} catch (ResourceNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid Manager ID");
 		}
-		
-		godown.setLocation(updatedGodown.getLocation());
-		godown.setCapacityInQuintals(updatedGodown.getCapacityInQuintals());
-		godown.setId(updatedGodown.getId());
-		
-		godown = godownService.update(godown);
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(godown);
+
+		godown.setManager(manager);
+
+		godown = godownService.insert(godown);
+
+		return ResponseEntity.status(HttpStatus.OK).body(godown);
+	}
+
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<?> delete(@PathVariable int id) throws ResourceNotFoundException {
+		godownService.getById(id);
+
+		godownService.delete(id);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 	
-	@DeleteMapping("/delete/{managerID}")
-	public ResponseEntity<?> deleteGodown(@PathVariable("id") int id) {
-		Godown godown = godownService.getById(id);
-		if (godown == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body("Godown not found"); 
-		}
-		
-		godownService.delete(godown);
-		
-		return ResponseEntity.status(HttpStatus.OK)
-				.body("Godown deleted successfully");
-	}
+
+
 }

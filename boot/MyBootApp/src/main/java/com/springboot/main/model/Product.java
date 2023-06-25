@@ -16,11 +16,11 @@ public class Product {
 	@Column(nullable = false)
 	private String title;
 	
-	@Column(length = 1500)
+	@Column(length = 2000)
 	private String description;
 	
 	private double price;
-	 
+
 	public int getId() {
 		return id;
 	}
@@ -53,6 +53,9 @@ public class Product {
 		this.price = price;
 	}
 
- 
+	@Override
+	public String toString() {
+		return "Product [id=" + id + ", title=" + title + ", description=" + description + ", price=" + price + "]";
+	}
 	
 }
